@@ -1,6 +1,6 @@
 # trace-evaluations
 
-This project houses scripts to aid in analyzing large sets of traces collected with [lighthouse](/GoogleChrome/lighthouse).
+This project houses scripts to aid in analyzing large sets of traces collected with [lighthouse](https://github.com/GoogleChrome/lighthouse).
 
 ## Processing Traces
 
