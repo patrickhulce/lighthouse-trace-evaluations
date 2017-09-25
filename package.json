@@ -1,0 +1,25 @@
+{
+  "name": "trace-evaluations",
+  "version": "1.0.0",
+  "description": "Evaluate correlations between trace data.",
+  "main": "lh-analyze.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patrickhulce/trace-evaluations.git"
+  },
+  "author": "Patrick Hulce <patrick.hulce@gmail.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/patrickhulce/trace-evaluations/issues"
+  },
+  "homepage": "https://github.com/patrickhulce/trace-evaluations#readme",
+  "dependencies": {
+    "lodash": "^4.17.4",
+    "shaman": "^0.3.2",
+    "simple-statistics": "^4.1.1",
+    "yargs": "^9.0.1"
+  }
+}
