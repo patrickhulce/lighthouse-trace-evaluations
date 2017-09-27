@@ -37,7 +37,7 @@ async function getCollatedResults(argv, analyzer) {
       const resultPromises = []
       for (let i = 0; i < numChunks; i++) {
         const input = runs.slice(i * numPerChunk, (i + 1) * numPerChunk)
-        resultPromises.push(runProcess({processor, input}))
+        resultPromises.push(runProcess({processor, input, force: argv.force}))
       }
 
       const resultsPromise = Promise.all(resultPromises).then(results => results.reduce((a, b) => a.concat(b)))
@@ -80,6 +80,10 @@ const args = yargs
     default: os.cpus().length || 1,
   })
   .option('collated', {
+    type: 'boolean',
+  })
+  .option('force', {
+    alias: 'f',
     type: 'boolean',
   })
   .option('limit', {
