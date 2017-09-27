@@ -21,6 +21,10 @@ async function getCollatedResults(argv, analyzer) {
   }
 
   const processors = analyzer.getProcessors()
+  if (processors.length !== argv.input.length) {
+    throw new Error(`Expected ${processors.length} input but received ${argv.input.length}`)
+  }
+
   const inputPromises = []
   for (const inputPath of argv.input) {
     const processor = processors[argv.input.indexOf(inputPath)]
