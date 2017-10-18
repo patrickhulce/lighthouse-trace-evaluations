@@ -6,7 +6,9 @@ const yargs = require('yargs')
 
 const load = require('../lib/load')
 
-const PREPROCESSED_FILENAME = 'preprocessed.json'
+const PREPROCESSED_FILENAME = processor => {
+  return `preprocessed_${processor}.json`
+}
 
 function getFullPath(filePath) {
   return path.resolve(process.cwd(), filePath)
@@ -27,18 +29,27 @@ async function runProcess(argv) {
   const processor = require(getFullPath(argv.processor))
   const results = []
   for (const run of runs) {
-    let result
+    const index = runs.indexOf(run)
+    try {
+      let result
 
-    const processedPath = path.join(run.path, PREPROCESSED_FILENAME)
-    if (!argv.force && fs.existsSync(processedPath)) {
-      result = JSON.parse(fs.readFileSync(processedPath))
-    } else {
-      result = await processor.process(run)
+      const pathPreview = run.path.length > 40 ?
+        run.path.slice(run.path.length - 40) :
+        run.path;
+      console.log(`⏳  Starting processing ${index}:${pathPreview}`)
+      const processedPath = path.join(run.path, PREPROCESSED_FILENAME(processor.name))
+      if (!argv.force && fs.existsSync(processedPath)) {
+        result = JSON.parse(fs.readFileSync(processedPath))
+      } else {
+        result = await processor.process(run)
+      }
+
+      results.push(result)
+      console.log(`✅  Done processing ${index}:${result.url}`)
+      fs.writeFileSync(processedPath, JSON.stringify(result))
+    } catch (err) {
+      console.error(err)
     }
-
-    results.push(result)
-    console.log(`✅  Done processing ${result.url}`)
-    fs.writeFileSync(processedPath, JSON.stringify(result))
   }
 
   const outputPath = getFullPath(argv.output)
