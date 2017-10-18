@@ -3,7 +3,10 @@
 const fs = require('fs')
 const os = require('os')
 const path = require('path')
+
+const _ = require('lodash')
 const yargs = require('yargs')
+const Promise = require('bluebird')
 
 const load = require('../lib/load')
 const runProcess = require('../lib/process-bin').run
@@ -26,22 +29,25 @@ async function getCollatedResults(argv, analyzer) {
   }
 
   const inputPromises = []
+  const concurrency = Math.ceil(argv.concurrency / argv.input.length)
   for (const inputPath of argv.input) {
     const processor = processors[argv.input.indexOf(inputPath)]
     if (fs.statSync(inputPath).isDirectory()) {
       const runs = load.traversePlotsFolder(inputPath)
+      const numPerChunk = argv.chunkSize
       const numToProcess = Math.min(argv.limit, runs.length)
-      const numPerChunk = Math.ceil(numToProcess / argv.split)
       const numChunks = Math.ceil(numToProcess / numPerChunk)
 
-      const resultPromises = []
+      const chunks = [];
       for (let i = 0; i < numChunks; i++) {
         const input = runs.slice(i * numPerChunk, (i + 1) * numPerChunk)
-        resultPromises.push(runProcess({processor, input, force: argv.force}))
+        chunks.push(input)
       }
 
-      const resultsPromise = Promise.all(resultPromises).then(results => results.reduce((a, b) => a.concat(b)))
-      inputPromises.push(resultsPromise)
+      const resultPromise = Promise
+        .map(chunks, input => runProcess({processor, input, force: argv.force}), {concurrency})
+        .then(_.flatten)
+      inputPromises.push(resultPromise)
     } else {
       inputPromises.push(JSON.parse(fs.readFileSync(inputPath)).slice(0, argv.limit))
     }
@@ -74,8 +80,12 @@ const args = yargs
     type: 'string',
     required: true,
   })
-  .option('split', {
-    alias: 's',
+  .option('chunkSize', {
+    type: 'number',
+    default: 5,
+  })
+  .option('concurrency', {
+    alias: 'j',
     type: 'number',
     default: os.cpus().length || 1,
   })
