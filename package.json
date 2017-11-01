@@ -19,6 +19,7 @@
   "dependencies": {
     "bluebird": "^3.5.1",
     "lodash": "^4.17.4",
+    "progress": "^2.0.0",
     "shaman": "^0.3.2",
     "simple-statistics": "^4.1.1",
     "yargs": "^9.0.1"

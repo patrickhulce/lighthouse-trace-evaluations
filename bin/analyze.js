@@ -7,6 +7,7 @@ const path = require('path')
 const _ = require('lodash')
 const yargs = require('yargs')
 const Promise = require('bluebird')
+const ProgressBar = require('progress')
 
 const load = require('../lib/load')
 const runProcess = require('../lib/process-bin').run
@@ -44,8 +45,18 @@ async function getCollatedResults(argv, analyzer) {
         chunks.push(input)
       }
 
+      const progress = new ProgressBar('analyzing [:bar] :percent :etas', {
+        complete: '-',
+        incomplete: ' ',
+        width: 40,
+        total: chunks.length,
+      })
+
       const resultPromise = Promise
-        .map(chunks, input => runProcess({processor, input, force: argv.force}), {concurrency})
+        .map(chunks, input => runProcess({processor, input, force: argv.force}).then(result => {
+          progress.tick(1)
+          return result
+        }), {concurrency})
         .then(_.flatten)
       inputPromises.push(resultPromise)
     } else {
