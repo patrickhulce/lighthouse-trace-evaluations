@@ -18,8 +18,9 @@
   "homepage": "https://github.com/patrickhulce/trace-evaluations#readme",
   "dependencies": {
     "bluebird": "^3.5.1",
+    "cli-progress": "^1.6.0",
     "lodash": "^4.17.4",
-    "progress": "^2.0.0",
+    "node-fetch": "^1.7.3",
     "shaman": "^0.3.2",
     "simple-statistics": "^4.1.1",
     "yargs": "^9.0.1"

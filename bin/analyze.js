@@ -7,7 +7,7 @@ const path = require('path')
 const _ = require('lodash')
 const yargs = require('yargs')
 const Promise = require('bluebird')
-const ProgressBar = require('progress')
+const Progress = require('cli-progress')
 
 const load = require('../lib/load')
 const runProcess = require('../lib/process-bin').run
@@ -29,6 +29,8 @@ async function getCollatedResults(argv, analyzer) {
     throw new Error(`Expected ${processors.length} input but received ${argv.input.length}`)
   }
 
+  let totalChunks = 0
+  let tickProgress = () => {}
   const inputPromises = []
   const concurrency = Math.ceil(argv.concurrency / argv.input.length)
   for (const inputPath of argv.input) {
@@ -45,26 +47,27 @@ async function getCollatedResults(argv, analyzer) {
         chunks.push(input)
       }
 
-      const progress = new ProgressBar('analyzing [:bar] :percent :etas', {
-        complete: '-',
-        incomplete: ' ',
-        width: 40,
-        total: chunks.length,
-      })
-
       const resultPromise = Promise
         .map(chunks, input => runProcess({processor, input, force: argv.force}).then(result => {
-          progress.tick(1)
+          tickProgress()
           return result
         }), {concurrency})
         .then(_.flatten)
       inputPromises.push(resultPromise)
+      totalChunks += chunks.length
     } else {
       inputPromises.push(JSON.parse(fs.readFileSync(inputPath)).slice(0, argv.limit))
     }
   }
 
+  const progress = new Progress.Bar({
+    etaBuffer: Math.ceil(totalChunks / 10),
+  }, Progress.Presets.shades_classic)
+  tickProgress = () => progress.increment()
+  progress.start(totalChunks)
   const analyzeArguments = await Promise.all(inputPromises)
+  progress.stop()
+
   console.log(`✅  Done processing inputs`)
   const collated = analyzer.collate(...analyzeArguments)
   const collatedPath = `${argv.outputWithoutExt}.collated.json`
