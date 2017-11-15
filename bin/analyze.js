@@ -127,5 +127,5 @@ const args = yargs
   })
   .argv
 
-runAnalyze(args)
+runAnalyze(args).catch(console.error)
 
