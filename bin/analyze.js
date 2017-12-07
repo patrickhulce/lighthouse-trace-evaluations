@@ -52,7 +52,9 @@ async function processInputs(processors, argv) {
       inputPromises.push(resultPromise)
       totalChunks += chunks.length
     } else {
-      inputPromises.push(JSON.parse(fs.readFileSync(inputPath)).slice(0, argv.limit))
+      const fileContent = fs.readFileSync(inputPath)
+      const fileAsJson = JSON.parse(fileContent)
+      inputPromises.push(fileAsJson.slice(0, argv.limit))
     }
   }
 
@@ -72,7 +74,7 @@ async function getCollatedResults(argv, analyzer) {
   if (argv.collated) {
     if (argv.input.length !== 1) throw new Error('Can only specify one collated input')
     const collated = JSON.parse(fs.readFileSync(getFullPath(argv.input[0]), 'utf-8'))
-    console.log(`✅  Loaded ${collated.length} collated results`)
+    console.log(`✅  Loaded ${collated.length || Object.keys(collated).length} collated results`)
     return collated
   }
 
@@ -84,7 +86,7 @@ async function getCollatedResults(argv, analyzer) {
   const analyzeArguments = await processInputs(processors, argv)
   const collated = analyzer.collate(...analyzeArguments)
   const collatedPath = `${argv.outputWithoutExt}.collated.json`
-  console.log(`✅  Collated ${collated.length} results`)
+  console.log(`✅  Collated ${collated.length || Object.keys(collated).length} results`)
   fs.writeFileSync(collatedPath, JSON.stringify(collated, null, 2))
   return collated
 }
