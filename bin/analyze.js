@@ -24,19 +24,7 @@ function cleanupOnExit() {
   })
 }
 
-async function getCollatedResults(argv, analyzer) {
-  if (argv.collated) {
-    if (argv.input.length !== 1) throw new Error('Can only specify one collated input')
-    const collated = JSON.parse(fs.readFileSync(getFullPath(argv.input[0]), 'utf-8'))
-    console.log(`✅  Loaded ${collated.length} collated results`)
-    return collated
-  }
-
-  const processors = analyzer.getProcessors()
-  if (processors.length !== argv.input.length) {
-    throw new Error(`Expected ${processors.length} input but received ${argv.input.length}`)
-  }
-
+async function processInputs(processors, argv) {
   let totalChunks = 0
   let tickProgress = () => {}
   const inputPromises = []
@@ -77,6 +65,23 @@ async function getCollatedResults(argv, analyzer) {
   progress.stop()
 
   console.log(`✅  Done processing inputs`)
+  return analyzeArguments
+}
+
+async function getCollatedResults(argv, analyzer) {
+  if (argv.collated) {
+    if (argv.input.length !== 1) throw new Error('Can only specify one collated input')
+    const collated = JSON.parse(fs.readFileSync(getFullPath(argv.input[0]), 'utf-8'))
+    console.log(`✅  Loaded ${collated.length} collated results`)
+    return collated
+  }
+
+  const processors = analyzer.getProcessors()
+  if (processors.length !== argv.input.length) {
+    throw new Error(`Expected ${processors.length} input but received ${argv.input.length}`)
+  }
+
+  const analyzeArguments = await processInputs(processors, argv)
   const collated = analyzer.collate(...analyzeArguments)
   const collatedPath = `${argv.outputWithoutExt}.collated.json`
   console.log(`✅  Collated ${collated.length} results`)
