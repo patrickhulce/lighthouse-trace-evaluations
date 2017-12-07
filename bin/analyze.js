@@ -11,9 +11,17 @@ const Progress = require('cli-progress')
 
 const load = require('../lib/load')
 const runProcess = require('../lib/process-bin').run
+const cleanupTmpFiles = require('../lib/process-bin').cleanupTmp
 
 function getFullPath(filePath) {
   return path.resolve(process.cwd(), filePath)
+}
+
+function cleanupOnExit() {
+  process.on('SIGINT', async () => {
+    cleanupTmpFiles()
+    process.exit(1)
+  })
 }
 
 async function getCollatedResults(argv, analyzer) {
@@ -127,5 +135,6 @@ const args = yargs
   })
   .argv
 
+cleanupOnExit()
 runAnalyze(args).catch(console.error)
 
