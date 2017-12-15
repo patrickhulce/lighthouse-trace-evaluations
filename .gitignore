@@ -1,5 +1,8 @@
 node_modules/
 out-*/
 
+*.csv
 *.collated.json
+analysis*.json
 results.json
+
