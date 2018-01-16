@@ -19,7 +19,7 @@ const output = [
 for (const site of fileContent.sites) {
   const entry = [site.url]
   for (const metricName of METRIC_NAMES) {
-    const value = site[metricName][property]
+    const value = site[metricName] && site[metricName][property]
     entry.push(value || '')
   }
 

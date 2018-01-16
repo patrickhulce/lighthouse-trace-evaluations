@@ -28,8 +28,8 @@ const lanternMetrics = new Map([
   ['timeToConsistentlyInteractive', 'roughEstimateOfTTCI'],
 ])
 
-indexSiteData(fileContentA.sites, 'runA', /lantern/.test(RUN_A) ? lanternMetrics : defaultMetrics)
-indexSiteData(fileContentB.sites, 'runB', /lantern/.test(RUN_B) ? lanternMetrics : defaultMetrics)
+indexSiteData(fileContentA.sites, 'runA', /lantern|lightrider/.test(RUN_A) ? lanternMetrics : defaultMetrics)
+indexSiteData(fileContentB.sites, 'runB', /lantern|lightrider/.test(RUN_B) ? lanternMetrics : defaultMetrics)
 
 const collatedOutput = Array.from(siteData.entries())
   .map(item => ({url: item[0], ...item[1]}))

@@ -14,7 +14,9 @@ const METRIC_NAMES = /lantern/.test(ANALYSIS_FILE)
 const normalizedValues = [['URL'].concat(METRIC_NAMES.map(s => _.startCase(s)))]
 
 for (const site of fileContent.sites) {
-  for (let i = 0; i < site.load.values.length; i++) {
+  if (!METRIC_NAMES.every(metric => site[metric])) continue
+
+  for (let i = 0; i < site[METRIC_NAMES[0]].values.length; i++) {
     const entry = [site.url]
     for (const metricName of METRIC_NAMES) {
       const value = site[metricName].values[i]

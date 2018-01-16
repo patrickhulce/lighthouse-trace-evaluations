@@ -3,12 +3,12 @@
 OUT_FOLDER=${1:-out-results}
 echo "Processing from $OUT_FOLDER..."
 
-for t in wpt lantern throttled unthrottled; do
+for t in wpt lantern throttled unthrottled lightrider; do
   collatedinput="./$OUT_FOLDER/collated-multi-run-$t.json"
   analysisoutput="./$OUT_FOLDER/analysis-multi-run-$t.json"
   analyzer="./lib/analyzers/multi-run-analyzer.js"
 
-  if [[ $t == lantern ]]; then
+  if [[ $t == lantern ]] || [[ $t == lightrider ]]; then
     analyzer="./lib/analyzers/lantern-multi-run-analyzer.js"
   fi
 
@@ -23,7 +23,7 @@ for t in wpt lantern throttled unthrottled; do
   ./scripts/multi-run-to-summary.js $analysisoutput > "./$OUT_FOLDER/multi-summary-$t.csv"
 done
 
-for pair in "wpt;lantern" "wpt;throttled" "wpt;unthrottled" "throttled;lantern" "throttled;unthrottled"; do
+for pair in "wpt;lantern" "wpt;throttled" "wpt;unthrottled" "wpt;lightrider" "throttled;lantern" "throttled;unthrottled" "lantern;lightrider"; do
   half1=`echo $pair | cut -d \; -f 1`
   half2=`echo $pair | cut -d \; -f 2`
 
