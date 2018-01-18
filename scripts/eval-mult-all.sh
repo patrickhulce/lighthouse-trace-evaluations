@@ -41,4 +41,6 @@ for pair in "wpt;lantern" "wpt;throttled" "wpt;unthrottled" "wpt;lightrider" "th
     -i $collatedoutput \
     -o $analysisoutput \
     --collated
+
+  ./scripts/xpa-run-to-summary.js $analysisoutput $half1 $half2 > "./$OUT_FOLDER/xpa-$half1-$half2.csv"
 done
