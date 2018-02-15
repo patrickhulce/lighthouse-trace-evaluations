@@ -16,7 +16,7 @@ _.forEach(data, (runs, url) => {
       url,
       load: 0,
       firstContentfulPaint: 0,
-      firstMeanginfulPaint: 0,
+      firstMeaningfulPaint: 0,
       timeToFirstInteractive: 0,
       timeToConsistentlyInteractive: 0,
     })
