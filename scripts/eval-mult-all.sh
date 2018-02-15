@@ -21,6 +21,7 @@ for t in wpt lantern throttled unthrottled lightrider; do
   echo "Converting $analysisoutput to CSV..."
   ./scripts/multi-run-to-scatter.js $analysisoutput > "./$OUT_FOLDER/multi-scatter-$t.csv"
   ./scripts/multi-run-to-summary.js $analysisoutput > "./$OUT_FOLDER/multi-summary-$t.csv"
+  ./scripts/multi-run-to-medians.js $collatedinput > "./$OUT_FOLDER/collated-medians-$t.json"
 done
 
 for pair in "wpt;lantern" "wpt;throttled" "wpt;unthrottled" "wpt;lightrider" "throttled;lantern" "throttled;unthrottled" "lantern;lightrider"; do
