@@ -33,8 +33,8 @@ async function runProcess(argv) {
     try {
       let result
 
-      const pathPreview = run.path.length > 40 ?
-        run.path.slice(run.path.length - 40) :
+      const pathPreview = run.path.length > 60 ?
+        run.path.slice(run.path.length - 60) :
         run.path;
       console.log(`⏳  Starting processing ${index}:${pathPreview}`)
       const processedPath = path.join(run.path, PREPROCESSED_FILENAME(processor.name))

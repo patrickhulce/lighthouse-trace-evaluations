@@ -111,7 +111,7 @@ const args = yargs
   })
   .option('chunkSize', {
     type: 'number',
-    default: 5,
+    default: 3,
   })
   .option('concurrency', {
     alias: 'j',
